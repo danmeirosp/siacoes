@@ -14,18 +14,23 @@ import br.edu.utfpr.dv.siacoes.model.BugReport.BugStatus;
 import br.edu.utfpr.dv.siacoes.model.Module;
 import br.edu.utfpr.dv.siacoes.model.User;
 
-public class BugReportDAO {
+public class BugReportDAO implements AutoClosable{
 	
-	public void CloseSiacoes(Connection conn, Result rs, Statement stmt){
-		if((conn != null) && !conn.isClosed())
-			conn.close();
-		if((rs != null) && !rs.isClosed())
-			rs.close();
-		if((stmt != null) && !stmt.isClosed())
-			stmt.close();
-	}
-	
+	static String readFirstLineFromFileWithFinallyBlock(Connection conn, Result rs, Statement stmt) throws IOException {
+		BufferedReader buf = new BufferedReader(new FileReader(path));
+			if((conn != null) && !conn.isClosed())
+				conn.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+		}
+	}	
 	public BugReport findById(int id) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
 		try{
 			conn = ConnectionDAO.getInstance().getConnection();
 			stmt = conn.prepareStatement("SELECT bugreport.*, \"user\".name " + 
@@ -33,7 +38,6 @@ public class BugReportDAO {
 				"WHERE idBugReport = ?");
 		
 			stmt.setInt(1, id);
-			
 			rs = stmt.executeQuery();
 			
 			if(rs.next()){
@@ -42,7 +46,7 @@ public class BugReportDAO {
 				return null;
 			}
 		}finally{
-			CloseSiacoes(conn, rs, stmt);
+			if (buf != null) buf.close();
 		}
 	}
 	
@@ -64,9 +68,9 @@ public class BugReportDAO {
 				list.add(this.loadObject(rs));
 			}
 			
-			return list;
+			return buf.readLine();
 		}finally{
-			CloseSiacoes(conn, rs, stmt);
+			if (buf != null) buf.close();
 		}
 	}
 	
@@ -115,7 +119,7 @@ public class BugReportDAO {
 			
 			return bug.getIdBugReport();
 		}finally{
-			CloseSiacoes(conn, rs, stmt);
+			if (buf != null) buf.close();
 		}
 	}
 	

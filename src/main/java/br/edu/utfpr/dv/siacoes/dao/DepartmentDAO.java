@@ -12,18 +12,23 @@ import java.util.List;
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
 import br.edu.utfpr.dv.siacoes.model.Department;
 
-public class DepartmentDAO {
+public class DepartmentDAO implements AutoClosable{
 	
-	public void CloseSiacoes(Connection conn, Result rs, Statement stmt){
-		if((conn != null) && !conn.isClosed())
-			conn.close();
-		if((rs != null) && !rs.isClosed())
-			rs.close();
-		if((stmt != null) && !stmt.isClosed())
-			stmt.close();
-	}
-
+	static String readFirstLineFromFileWithFinallyBlock(Connection conn, Result rs, Statement stmt) throws IOException {
+		BufferedReader buf = new BufferedReader(new FileReader(path));
+			if((conn != null) && !conn.isClosed())
+				conn.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+		}
+	}	
 	public Department findById(int id) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
 		try{
 			conn = ConnectionDAO.getInstance().getConnection();
 			stmt = conn.prepareStatement(
@@ -41,7 +46,7 @@ public class DepartmentDAO {
 				return null;
 			}
 		}finally{
-			CloseSiacoes(conn, rs, stmt);
+			if (buf != null) buf.close();
 		}
 	}
 	
@@ -66,7 +71,7 @@ public class DepartmentDAO {
 			
 			return list;
 		}finally{
-			CloseSiacoes(conn, rs, stmt);
+			if (buf != null) buf.close();
 		}
 	}
 	
@@ -91,7 +96,7 @@ public class DepartmentDAO {
 			
 			return list;
 		}finally{
-			CloseSiacoes(conn, rs, stmt);
+			if (buf != null) buf.close();
 		}
 	}
 	
@@ -142,7 +147,7 @@ public class DepartmentDAO {
 			
 			return department.getIdDepartment();
 		}finally{
-			CloseSiacoes(conn, rs, stmt);
+			if (buf != null) buf.close();
 		}
 	}
 	

@@ -11,22 +11,23 @@ import java.util.List;
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
 import br.edu.utfpr.dv.siacoes.model.ActivityUnit;
 
-public class ActivityUnitDAO {
+public class ActivityUnitDAO implements AutoClosable{
 	
-	public void CloseSiacoes(Connection conn, Result rs, Statement stmt){
-		if((conn != null) && !conn.isClosed())
-			conn.close();
-		if((rs != null) && !rs.isClosed())
-			rs.close();
-		if((stmt != null) && !stmt.isClosed())
-			stmt.close();
-	}
+	static String readFirstLineFromFileWithFinallyBlock(Connection conn, Result rs, Statement stmt) throws IOException {
+		BufferedReader buf = new BufferedReader(new FileReader(path));
+			if((conn != null) && !conn.isClosed())
+				conn.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+    }
 	
 	public List<ActivityUnit> listAll() throws SQLException{	
 		try{
 			conn = ConnectionDAO.getInstance().getConnection();
 			stmt = conn.createStatement();
-		
+		} catch(Exception e) {
 			rs = stmt.executeQuery("SELECT * FROM activityunit ORDER BY description");
 			
 			List<ActivityUnit> list = new ArrayList<ActivityUnit>();
@@ -35,9 +36,9 @@ public class ActivityUnitDAO {
 				list.add(this.loadObject(rs));
 			}
 			
-			return list;
+			return buf.readLine();
 		}finally{
-			CloseSiacoes(conn, rs, stmt);
+			 if (buf != null) buf.close();
 		}
 	}
 	
@@ -60,7 +61,7 @@ public class ActivityUnitDAO {
 				return null;
 			}
 		}finally{
-			CloseSiacoes(conn, rs, stmt);
+			if (buf != null) buf.close();
 		}
 	}
 	
@@ -103,7 +104,7 @@ public class ActivityUnitDAO {
 			
 			return unit.getIdActivityUnit();
 		}finally{
-			CloseSiacoes(conn, rs, stmt);
+			if (buf != null) buf.close();
 		}
 	}
 	

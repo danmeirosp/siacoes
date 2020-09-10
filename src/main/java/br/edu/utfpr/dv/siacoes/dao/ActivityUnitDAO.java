@@ -11,23 +11,17 @@ import java.util.List;
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
 import br.edu.utfpr.dv.siacoes.model.ActivityUnit;
 
-public class ActivityUnitDAO implements AutoClosable{
+public class ActivityUnitDAO extends Template {
 	
-	static String readFirstLineFromFileWithFinallyBlock(Connection conn, Result rs, Statement stmt) throws IOException {
-		BufferedReader buf = new BufferedReader(new FileReader(path));
-			if((conn != null) && !conn.isClosed())
-				conn.close();
-			if((rs != null) && !rs.isClosed())
-				rs.close();
-			if((stmt != null) && !stmt.isClosed())
-				stmt.close();
-    }
-	
-	public List<ActivityUnit> listAll() throws SQLException{	
+	public List<ActivityUnit> listAll() throws SQLException{
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		
 		try{
 			conn = ConnectionDAO.getInstance().getConnection();
 			stmt = conn.createStatement();
-		} catch(Exception e) {
+		
 			rs = stmt.executeQuery("SELECT * FROM activityunit ORDER BY description");
 			
 			List<ActivityUnit> list = new ArrayList<ActivityUnit>();
@@ -36,9 +30,14 @@ public class ActivityUnitDAO implements AutoClosable{
 				list.add(this.loadObject(rs));
 			}
 			
-			return buf.readLine();
+			return list;
 		}finally{
-			 if (buf != null) buf.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+			if((conn != null) && !conn.isClosed())
+				conn.close();
 		}
 	}
 	
@@ -61,7 +60,12 @@ public class ActivityUnitDAO implements AutoClosable{
 				return null;
 			}
 		}finally{
-			if (buf != null) buf.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+			if((conn != null) && !conn.isClosed())
+				conn.close();
 		}
 	}
 	
@@ -104,7 +108,12 @@ public class ActivityUnitDAO implements AutoClosable{
 			
 			return unit.getIdActivityUnit();
 		}finally{
-			if (buf != null) buf.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+			if((conn != null) && !conn.isClosed())
+				conn.close();
 		}
 	}
 	

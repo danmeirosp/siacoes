@@ -12,18 +12,8 @@ import java.util.List;
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
 import br.edu.utfpr.dv.siacoes.model.Department;
 
-public class DepartmentDAO implements AutoClosable{
-	
-	static String readFirstLineFromFileWithFinallyBlock(Connection conn, Result rs, Statement stmt) throws IOException {
-		BufferedReader buf = new BufferedReader(new FileReader(path));
-			if((conn != null) && !conn.isClosed())
-				conn.close();
-			if((rs != null) && !rs.isClosed())
-				rs.close();
-			if((stmt != null) && !stmt.isClosed())
-				stmt.close();
-		}
-	}	
+public class DepartmentDAO extends Template {
+
 	public Department findById(int id) throws SQLException{
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -46,7 +36,12 @@ public class DepartmentDAO implements AutoClosable{
 				return null;
 			}
 		}finally{
-			if (buf != null) buf.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+			if((conn != null) && !conn.isClosed())
+				conn.close();
 		}
 	}
 	
@@ -71,7 +66,12 @@ public class DepartmentDAO implements AutoClosable{
 			
 			return list;
 		}finally{
-			if (buf != null) buf.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+			if((conn != null) && !conn.isClosed())
+				conn.close();
 		}
 	}
 	
@@ -96,7 +96,12 @@ public class DepartmentDAO implements AutoClosable{
 			
 			return list;
 		}finally{
-			if (buf != null) buf.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+			if((conn != null) && !conn.isClosed())
+				conn.close();
 		}
 	}
 	
@@ -147,7 +152,12 @@ public class DepartmentDAO implements AutoClosable{
 			
 			return department.getIdDepartment();
 		}finally{
-			if (buf != null) buf.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+			if((conn != null) && !conn.isClosed())
+				conn.close();
 		}
 	}
 	

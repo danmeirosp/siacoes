@@ -14,18 +14,8 @@ import br.edu.utfpr.dv.siacoes.model.BugReport.BugStatus;
 import br.edu.utfpr.dv.siacoes.model.Module;
 import br.edu.utfpr.dv.siacoes.model.User;
 
-public class BugReportDAO implements AutoClosable{
+public class BugReportDAO extends Template {
 	
-	static String readFirstLineFromFileWithFinallyBlock(Connection conn, Result rs, Statement stmt) throws IOException {
-		BufferedReader buf = new BufferedReader(new FileReader(path));
-			if((conn != null) && !conn.isClosed())
-				conn.close();
-			if((rs != null) && !rs.isClosed())
-				rs.close();
-			if((stmt != null) && !stmt.isClosed())
-				stmt.close();
-		}
-	}	
 	public BugReport findById(int id) throws SQLException{
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -38,6 +28,7 @@ public class BugReportDAO implements AutoClosable{
 				"WHERE idBugReport = ?");
 		
 			stmt.setInt(1, id);
+			
 			rs = stmt.executeQuery();
 			
 			if(rs.next()){
@@ -46,7 +37,12 @@ public class BugReportDAO implements AutoClosable{
 				return null;
 			}
 		}finally{
-			if (buf != null) buf.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+			if((conn != null) && !conn.isClosed())
+				conn.close();
 		}
 	}
 	
@@ -68,9 +64,14 @@ public class BugReportDAO implements AutoClosable{
 				list.add(this.loadObject(rs));
 			}
 			
-			return buf.readLine();
+			return list;
 		}finally{
-			if (buf != null) buf.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+			if((conn != null) && !conn.isClosed())
+				conn.close();
 		}
 	}
 	
@@ -119,7 +120,12 @@ public class BugReportDAO implements AutoClosable{
 			
 			return bug.getIdBugReport();
 		}finally{
-			if (buf != null) buf.close();
+			if((rs != null) && !rs.isClosed())
+				rs.close();
+			if((stmt != null) && !stmt.isClosed())
+				stmt.close();
+			if((conn != null) && !conn.isClosed())
+				conn.close();
 		}
 	}
 	
